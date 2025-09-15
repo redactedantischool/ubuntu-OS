@@ -6,7 +6,14 @@
   "forwardPorts": [
     6080
   ],
-  // This is the key change: from "postCreateCommand" to "postStartCommand"
+  // This new section ensures port 6080 is always public by default
+  "portsAttributes": {
+    "6080": {
+      "label": "VNC Desktop",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  },
   "postStartCommand": "/usr/local/bin/startup.sh",
   "customizations": {
     "vscode": {
