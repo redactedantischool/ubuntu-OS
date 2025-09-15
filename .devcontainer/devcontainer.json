@@ -1,0 +1,18 @@
+{
+  "name": "Cloaked Firefox Desktop",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [
+    6080
+  ],
+  // This is the key change: from "postCreateCommand" to "postStartCommand"
+  "postStartCommand": "/usr/local/bin/startup.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": []
+    }
+  },
+  "remoteUser": "vscode"
+}
