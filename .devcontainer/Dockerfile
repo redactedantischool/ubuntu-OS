@@ -5,7 +5,6 @@ FROM mcr.microsoft.com/devcontainers/base:bullseye
 ENV DEBIAN_FRONTEND=noninteractive
 
 # --- LAYER 1: Install all software packages ---
-# Added openjdk-17-jre (Java Runtime) and curl to download TLauncher.
 RUN sudo apt-get update && \
     sudo apt-get install -y --no-install-recommends \
     xfce4 \
@@ -23,9 +22,9 @@ RUN sudo apt-get update && \
     sudo apt-get clean && \
     sudo rm -rf /var/lib/apt/lists/*
 
-# --- LAYER 2: Download and Install TLauncher from the .deb file ---
-# This is the correct, official method for Debian-based systems.
-RUN curl -L "https://tlauncher.org/installer-debian" -o /tmp/tlauncher.deb && \
+# --- LAYER 2: Download and Install TLauncher from the correct .deb file ---
+# Using the direct repository URL to get the actual installer
+RUN curl -L "http://repo.tlauncher.org/v2/downloads/tlauncher/linux/TLauncher-2.91.deb" -o /tmp/tlauncher.deb && \
     sudo apt-get install -y /tmp/tlauncher.deb && \
     rm /tmp/tlauncher.deb
 
