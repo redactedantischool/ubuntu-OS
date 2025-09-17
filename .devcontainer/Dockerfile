@@ -23,9 +23,9 @@ RUN sudo apt-get update && \
     sudo rm -rf /var/lib/apt/lists/*
 
 # --- LAYER 2: Download TLauncher ---
-# Create the Desktop directory first, then download the file into it.
+# Using the correct, direct download link for the JAR file.
 RUN mkdir -p /home/vscode/Desktop && \
-    curl -L "https://tlauncher.org/jar" -o /home/vscode/Desktop/TLauncher.jar && \
+    curl -L "https://tlauncher.org/res/program/TLauncher.jar" -o /home/vscode/Desktop/TLauncher.jar && \
     chown vscode:vscode /home/vscode/Desktop/TLauncher.jar
 
 # --- LAYER 3: Configure the VNC user, password, and xstartup script ---
