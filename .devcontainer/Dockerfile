@@ -5,6 +5,7 @@ FROM mcr.microsoft.com/devcontainers/base:bullseye
 ENV DEBIAN_FRONTEND=noninteractive
 
 # --- LAYER 1: Install all software packages ---
+# Added openjdk-17-jre (Java Runtime) and curl to download TLauncher.
 RUN sudo apt-get update && \
     sudo apt-get install -y --no-install-recommends \
     xfce4 \
@@ -15,12 +16,19 @@ RUN sudo apt-get update && \
     websockify \
     tor \
     dbus-x11 \
-    firefox-esr && \
+    firefox-esr \
+    openjdk-17-jre \
+    curl && \
     # Clean up apt cache
     sudo apt-get clean && \
     sudo rm -rf /var/lib/apt/lists/*
 
-# --- LAYER 2: Configure the VNC user, password, and xstartup script ---
+# --- LAYER 2: Download TLauncher ---
+# Downloads the TLauncher .jar file directly to the user's desktop.
+RUN curl -L "https://tlauncher.org/jar" -o /home/vscode/Desktop/TLauncher.jar && \
+    sudo chown vscode:vscode /home/vscode/Desktop/TLauncher.jar
+
+# --- LAYER 3: Configure the VNC user, password, and xstartup script ---
 RUN mkdir -p /home/vscode/.vnc && \
     echo "vscode" | /usr/bin/vncpasswd -f > /home/vscode/.vnc/passwd && \
     chmod 600 /home/vscode/.vnc/passwd && \
@@ -36,7 +44,7 @@ unset DBUS_SESSION_BUS_ADDRESS\n\
     chmod 755 /home/vscode/.vnc/xstartup && \
     chown -R vscode:vscode /home/vscode/.vnc
 
-# --- LAYER 3: Create the main container startup script ---
+# --- LAYER 4: Create the main container startup script ---
 RUN echo '#!/bin/bash\n\
 # Clean up old VNC lock files\n\
 rm -f /tmp/.X1-lock /tmp/.X11-unix/X1\n\
