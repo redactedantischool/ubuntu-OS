@@ -4,7 +4,8 @@ FROM mcr.microsoft.com/devcontainers/base:bullseye
 # Set DEBIAN_FRONTEND to noninteractive to prevent all interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# --- LAYER 1: Install all software packages ---
+# --- LAYER 1: Install all necessary software (Java, Firefox, etc.) ---
+# This prepares the system for TLauncher, but does NOT try to download it.
 RUN sudo apt-get update && \
     sudo apt-get install -y --no-install-recommends \
     xfce4 \
@@ -22,13 +23,7 @@ RUN sudo apt-get update && \
     sudo apt-get clean && \
     sudo rm -rf /var/lib/apt/lists/*
 
-# --- LAYER 2: Download and Install TLauncher from the correct .deb file ---
-# Using the direct repository URL to get the actual installer
-RUN curl -L "http://repo.tlauncher.org/v2/downloads/tlauncher/linux/TLauncher-2.91.deb" -o /tmp/tlauncher.deb && \
-    sudo apt-get install -y /tmp/tlauncher.deb && \
-    rm /tmp/tlauncher.deb
-
-# --- LAYER 3: Configure the VNC user, password, and xstartup script ---
+# --- LAYER 2: Configure the VNC user, password, and xstartup script ---
 RUN mkdir -p /home/vscode/.vnc && \
     echo "vscode" | /usr/bin/vncpasswd -f > /home/vscode/.vnc/passwd && \
     chmod 600 /home/vscode/.vnc/passwd && \
@@ -44,7 +39,7 @@ unset DBUS_SESSION_BUS_ADDRESS\n\
     chmod 755 /home/vscode/.vnc/xstartup && \
     chown -R vscode:vscode /home/vscode/.vnc
 
-# --- LAYER 4: Create the main container startup script ---
+# --- LAYER 3: Create the main container startup script ---
 RUN echo '#!/bin/bash\n\
 # Clean up old VNC lock files\n\
 rm -f /tmp/.X1-lock /tmp/.X11-unix/X1\n\
