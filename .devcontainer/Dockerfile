@@ -5,7 +5,6 @@ FROM mcr.microsoft.com/devcontainers/base:bullseye
 ENV DEBIAN_FRONTEND=noninteractive
 
 # --- LAYER 1: Install all software packages ---
-# Added openjdk-17-jre (Java Runtime) and curl to download TLauncher.
 RUN sudo apt-get update && \
     sudo apt-get install -y --no-install-recommends \
     xfce4 \
@@ -24,9 +23,10 @@ RUN sudo apt-get update && \
     sudo rm -rf /var/lib/apt/lists/*
 
 # --- LAYER 2: Download TLauncher ---
-# Downloads the TLauncher .jar file directly to the user's desktop.
-RUN curl -L "https://tlauncher.org/jar" -o /home/vscode/Desktop/TLauncher.jar && \
-    sudo chown vscode:vscode /home/vscode/Desktop/TLauncher.jar
+# Create the Desktop directory first, then download the file into it.
+RUN mkdir -p /home/vscode/Desktop && \
+    curl -L "https://tlauncher.org/jar" -o /home/vscode/Desktop/TLauncher.jar && \
+    chown vscode:vscode /home/vscode/Desktop/TLauncher.jar
 
 # --- LAYER 3: Configure the VNC user, password, and xstartup script ---
 RUN mkdir -p /home/vscode/.vnc && \
